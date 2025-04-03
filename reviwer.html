@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprehensive Exam Reviewer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="reviewer-container">
+        <h1>Comprehensive Exam Reviewer</h1>
+
+        <div class="navigation">
+            <button id="prev-btn">Previous</button>
+            <select id="question-select"></select>
+            <span id="question-number"></span>
+            <button id="next-btn">Next</button>
+            <label for="voice-select" style="margin-left: 1rem; font-weight: bold;">Voice:</label>
+            <select id="voice-select"></select>
+            <button id="theme-toggle-btn" style="margin-left: auto; padding: 0.5rem 0.8rem; font-size: 1rem; background-color: var(--panel-bg-color); border: 1px solid var(--border-color); border-radius: 4px; cursor: pointer;">🌙</button> <!-- Dark Mode Toggle -->
+        </div>
+
+        <div class="content-area">
+            <div class="question-panel">
+                <h2 id="question-text">Loading question...</h2>
+                <ul id="options-list">
+                    <!-- Options will be loaded here by JavaScript -->
+                </ul>
+            </div>
+            <div class="rationalization-panel">
+                <h3>Rationalization</h3>
+                <p id="rationalization-text">Loading rationalization...</p>
+                <p><strong>Correct Answer:</strong> <span id="correct-answer-display">Loading...</span></p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Created by Juan Teodoro De Vera</p>
+        <div class="contact-area">
+            <button id="contact-btn">Contact Me</button>
+            <!-- This span will be revealed -->
+            <a href="#" id="email-link" class="email-display-link">
+                <span id="email-display">juanteodoro.devera@gmail.com</span>
+            </a>
+        </div>
+    </footer>
+    
+    <script src="script.js"></script>
+</body>
+</html>

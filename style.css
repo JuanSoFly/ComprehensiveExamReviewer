@@ -1,0 +1,578 @@
+:root {
+    --bg-color: #f4f7f6;
+    --panel-bg-color: #ffffff;
+    --text-color: #333;
+    --primary-color: #007bff;
+    --primary-hover-color: #0056b3;
+    --accent-color: #e9ecef;
+    --correct-answer-bg: #d1e7dd; /* Slightly adjusted green */
+    --correct-answer-text: #0f5132;
+    --wrong-answer-bg: #f8d7da; /* Reddish for wrong */
+    --wrong-answer-text: #842029;
+    --wrong-answer-border: #f5c2c7;
+    --selected-answer-border: #0d6efd; /* Adjusted blue */
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --border-color: #dee2e6;
+    --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    padding: 1rem;
+}
+
+body.dark-mode {
+    --bg-color: #212529;
+    --panel-bg-color: #343a40;
+    --text-color: #f8f9fa;
+    --accent-color: #495057;
+    --border-color: #495057;
+    --primary-color: #0d6efd; /* Keep primary for emphasis */
+    --primary-hover-color: #0b5ed7;
+    --correct-answer-bg: #198754; /* Darker green */
+    --correct-answer-text: #ffffff;
+    --wrong-answer-bg: #dc3545; /* Darker red */
+    --wrong-answer-text: #ffffff;
+    --wrong-answer-border: #b02a37;
+    --selected-answer-border: #6ea8fe; /* Lighter blue for dark mode */
+    --shadow-color: rgba(0, 0, 0, 0.4); /* Darker shadow */
+}
+body.dark-mode footer {
+    background-color: #212529; /* Match body bg */
+    border-top-color: var(--border-color);
+    color: #adb5bd; /* Lighter gray */
+}
+ body.dark-mode .navigation button,
+ body.dark-mode .navigation select,
+ body.dark-mode #voice-select,
+ body.dark-mode #theme-toggle-btn {
+     background-color: var(--panel-bg-color);
+     color: var(--text-color);
+     border-color: var(--border-color);
+ }
+  body.dark-mode .navigation button { /* Keep primary button distinct */
+      background-color: var(--primary-color);
+      color: white;
+      border-color: var(--primary-color);
+  }
+  body.dark-mode .navigation button:hover:not(:disabled) {
+      background-color: var(--primary-hover-color);
+      border-color: var(--primary-hover-color);
+  }
+   body.dark-mode #stop-speech-btn {
+       background-color: #dc3545; /* Keep stop red */
+       border-color: #dc3545;
+       color: white;
+   }
+    body.dark-mode #stop-speech-btn:hover:not(:disabled) {
+       background-color: #c82333;
+       border-color: #bd2130;
+   }
+
+body.dark-mode #options-list li:hover {
+     background-color: #495057; /* Darker hover */
+     border-color: #6c757d;
+}
+ body.dark-mode #email-display {
+     background-color: var(--accent-color); /* Use accent for contrast */
+     color: var(--primary-color);
+     border-color: var(--border-color);
+ }
+  body.dark-mode .email-display-link:hover #email-display {
+      background-color: #5a6268;
+  }
+  body.dark-mode #options-list li.correct-answer {
+      background-color: var(--correct-answer-bg);
+      border-color: var(--correct-answer-bg); /* Match border */
+      color: var(--correct-answer-text);
+  }
+   body.dark-mode #options-list li.wrong-answer {
+       background-color: var(--wrong-answer-bg);
+       border-color: var(--wrong-answer-border);
+       color: var(--wrong-answer-text);
+   }
+    body.dark-mode #options-list li.selected-answer {
+         border-color: var(--selected-answer-border);
+    }
+     body.dark-mode #options-list li.selected-answer.correct-answer {
+        background-color: var(--correct-answer-bg);
+        color: var(--correct-answer-text);
+        border-color: var(--selected-answer-border); /* Keep selection border visible */
+     }
+      body.dark-mode #options-list li.selected-answer.wrong-answer {
+          background-color: var(--wrong-answer-bg);
+          color: var(--wrong-answer-text);
+          border-color: var(--selected-answer-border); /* Keep selection border visible */
+      }
+     body.dark-mode #correct-answer-display {
+        background-color: var(--correct-answer-bg);
+        color: var(--correct-answer-text);
+     }
+
+.reviewer-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    background-color: var(--panel-bg-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px var(--shadow-color);
+    overflow: hidden; /* Contain shadows */
+    padding: 1.5rem;
+}
+
+h1 {
+    text-align: center;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+}
+
+.navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: var(--accent-color);
+    border-radius: 6px;
+    flex-wrap: wrap; /* Allow wrapping on small screens */
+    gap: 0.5rem;
+}
+
+.navigation button,
+.navigation select {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: var(--panel-bg-color);
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+.navigation button:disabled {
+     cursor: not-allowed;
+     opacity: 0.6;
+}
+
+.navigation button {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.navigation button:hover:not(:disabled) {
+    background-color: var(--primary-hover-color);
+    border-color: var(--primary-hover-color);
+}
+
+.navigation select {
+    flex-grow: 1; /* Allow dropdown to take available space */
+    max-width: 150px; /* Limit dropdown width */
+    text-align: center;
+}
+
+#question-number {
+    font-weight: bold;
+    min-width: 80px;
+    text-align: center;
+}
+
+.content-area {
+    display: grid;
+    grid-template-columns: 1fr; /* Mobile-first: single column */
+    gap: 1.5rem;
+}
+
+.rationalization-panel {
+    /* Initial state: hidden */
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    border-top: none; /* Hide border when collapsed */
+    box-shadow: none; /* Hide shadow when collapsed */
+    transition: opacity 0.4s ease-out, max-height 0.4s ease-out, padding 0.4s ease-out, margin 0.4s ease-out, border 0.4s ease-out, box-shadow 0.4s ease-out;
+    will-change: opacity, max-height; /* Performance hint */
+}
+
+/* Rationalization Panel - Visible state */
+.rationalization-panel.visible {
+    opacity: 1;
+    max-height: 1000px; /* Large enough to fit content */
+    overflow: visible;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+    margin-top: 1.5rem;
+    border-top: 1px solid var(--border-color); /* Show border when visible */
+    box-shadow: 0 2px 8px var(--shadow-color); /* Restore shadow */
+}
+ @media (min-width: 992px) {
+      .rationalization-panel.visible {
+           padding-top: 2rem;
+           padding-bottom: 2rem;
+      }
+ }
+
+ #options-list li {
+    pointer-events: auto;
+}
+
+/* Disable options after selection */
+#options-list li.disabled {
+     pointer-events: none;
+     cursor: default;
+     opacity: 0.7; /* Dim disabled options */
+}
+ #options-list li.disabled:hover {
+      background-color: transparent; /* No hover effect when disabled */
+      border-color: var(--border-color); /* Reset border on hover when disabled */
+ }
+
+ body.dark-mode #options-list li.disabled:hover {
+      background-color: transparent;
+      border-color: var(--border-color);
+ }
+
+
+.question-panel,
+.rationalization-panel {
+    background-color: var(--panel-bg-color);
+    padding: 1.5rem;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px var(--shadow-color);
+}
+
+#question-text {
+    margin-bottom: 2rem; /* Increased spacing below question */
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+#options-list {
+    list-style: none;
+    padding: 0;
+}
+
+#options-list li {
+    margin-bottom: 0.8rem;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    display: flex;
+    align-items: center;
+}
+
+#options-list li:hover {
+    background-color: #e2e6ea; /* Slightly darker hover */
+    border-color: #adb5bd;
+}
+
+#options-list li input[type="radio"] {
+    margin-right: 0.8rem;
+     /* Hide default radio button appearance */
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+
+ /* Custom radio button styling could be added here if desired */
+ #options-list li label {
+    cursor: pointer;
+     width: 100%; /* Make label clickable area */
+ }
+
+/* Style for Correct Answer */
+#options-list li.correct-answer {
+    background-color: transparent;
+     border-color: var(--border-color);
+     color: var(--text-color);
+     font-weight: normal;
+}
+
+/* Style WHEN answer is revealed and it IS correct */
+#options-list li.revealed.correct-answer {
+     background-color: var(--correct-answer-bg);
+     border-color: var(--correct-answer-text);
+     color: var(--correct-answer-text);
+     font-weight: bold;
+ }
+
+/* Style for Incorrect Answer (when revealed) */
+#options-list li.wrong-answer {
+    background-color: var(--wrong-answer-bg);
+    border-color: var(--wrong-answer-border);
+    color: var(--wrong-answer-text);
+    /* Optional: Add a subtle visual cue like slight opacity */
+    /* opacity: 0.8; */
+}
+
+ /* Style for the User's Selected Answer */
+ #options-list li.selected-answer {
+    border-color: var(--selected-answer-border);
+    border-width: 2px;
+    padding: calc(0.8rem - 1px) calc(1rem - 1px); /* Adjust padding for border */
+ }
+ /* Ensure selected correct answer keeps green background */
+ #options-list li.selected-answer.correct-answer {
+     background-color: var(--correct-answer-bg); /* Keep green */
+     color: var(--correct-answer-text);
+     border-color: var(--correct-answer-text); /* Match border */
+ }
+  /* Ensure selected wrong answer keeps red background */
+ #options-list li.selected-answer.wrong-answer {
+     background-color: var(--wrong-answer-bg); /* Keep red */
+     color: var(--wrong-answer-text);
+     border-color: var(--selected-answer-border); /* Keep blue border for selection emphasis */
+ }
+
+ /* Override for SELECTED correct answer AFTER reveal */
+ #options-list li.selected-answer.revealed.correct-answer {
+      background-color: var(--correct-answer-bg);
+      color: var(--correct-answer-text);
+      border-color: var(--selected-answer-border); /* Keep blue border */
+      border-width: 2px;
+      padding: calc(0.8rem - 1px) calc(1rem - 1px);
+  }
+  /* Override for SELECTED wrong answer AFTER reveal */
+   #options-list li.selected-answer.revealed.wrong-answer {
+      background-color: var(--wrong-answer-bg);
+      color: var(--wrong-answer-text);
+      border-color: var(--selected-answer-border); /* Keep blue border */
+      border-width: 2px;
+      padding: calc(0.8rem - 1px) calc(1rem - 1px);
+  }
+
+    /* Dark mode specific overrides */
+body.dark-mode #options-list li.correct-answer { /* Initial dark mode */
+      background-color: transparent;
+      border-color: var(--border-color);
+      color: var(--text-color);
+      font-weight: normal;
+}
+body.dark-mode #options-list li.revealed.correct-answer {
+      background-color: var(--correct-answer-bg);
+      border-color: var(--correct-answer-bg); /* Match dark green border */
+      color: var(--correct-answer-text);
+      font-weight: bold;
+}
+body.dark-mode #options-list li.revealed.wrong-answer {
+      background-color: var(--wrong-answer-bg);
+      border-color: var(--wrong-answer-border);
+      color: var(--wrong-answer-text);
+}
+body.dark-mode #options-list li.selected-answer.revealed.correct-answer {
+      background-color: var(--correct-answer-bg);
+      color: var(--correct-answer-text);
+      border-color: var(--selected-answer-border); /* Keep selection border */
+}
+body.dark-mode #options-list li.selected-answer.revealed.wrong-answer {
+      background-color: var(--wrong-answer-bg);
+      color: var(--wrong-answer-text);
+      border-color: var(--selected-answer-border); /* Keep selection border */
+}
+
+.rationalization-panel h3 {
+    color: var(--primary-color);
+    margin-bottom: 0.8rem;
+    border-bottom: 1px solid var(--accent-color);
+    padding-bottom: 0.5rem;
+}
+
+#rationalization-text {
+    margin-bottom: 1.5rem; /* Increased spacing below rationalization text */
+}
+
+#correct-answer-display {
+    font-weight: bold;
+    color: var(--correct-answer-text);
+    background-color: var(--correct-answer-bg);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    display: inline-block; /* Fit content */
+}
+ 
+.speech-button {
+padding: 0.5rem 0.8rem;
+font-size: 0.85rem;
+margin-left: 0.5rem; /* Space out buttons */
+background-color: #6c757d; /* Secondary color */
+color: white;
+border: 1px solid #6c757d;
+border-radius: 4px;
+cursor: pointer;
+transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+.speech-button:hover:not(:disabled) {
+background-color: #5a6268;
+border-color: #545b62;
+}
+.speech-button:disabled {
+cursor: not-allowed;
+opacity: 0.6;
+}
+
+#stop-speech-btn {
+background-color: #dc3545; /* Red for stop */
+border-color: #dc3545;
+margin-left: auto; /* Push stop button to the right in nav */
+}
+#stop-speech-btn:hover:not(:disabled) {
+background-color: #c82333;
+border-color: #bd2130;
+}
+
+/* Add some space below the question/rationalization text for buttons */
+#question-text + #options-list {
+margin-top: 1rem;
+}
+.rationalization-panel h3 + #rationalization-text {
+margin-bottom: 1rem;
+}
+
+/* Add containers for speech buttons */
+.speech-controls {
+margin-top: 1rem;
+text-align: right; /* Align buttons to the right */
+}
+
+/* Style for the new voice select dropdown */
+#voice-select {
+padding: 0.6rem 1rem;
+font-size: 0.9rem;
+border: 1px solid var(--border-color);
+border-radius: 4px;
+background-color: var(--panel-bg-color);
+margin-left: 0.5rem; /* Space it from label */
+max-width: 200px; /* Limit width */
+}
+
+/* Adjust label margin if needed */
+label[for="voice-select"] {
+/* Optional: adjust vertical alignment if needed */
+align-self: center;
+}
+
+footer {
+text-align: center;
+padding: 1.5rem 1rem;
+margin-top: 3rem; /* Add space above footer */
+border-top: 1px solid var(--border-color, #dee2e6);
+background-color: var(--accent-color, #e9ecef);
+font-size: 0.9rem;
+color: var(--text-color, #555); /* Slightly muted text */
+margin-top: 4rem;
+}
+
+footer p {
+margin-bottom: 0.8rem;
+}
+
+.contact-area {
+display: flex;
+justify-content: center;
+align-items: center;
+gap: 10px; /* Space between button and email */
+flex-wrap: wrap; /* Allow wrapping on small screens */
+}
+
+/* Contact Button Styling */
+#contact-btn {
+padding: 0.6rem 1.2rem;
+font-size: 0.9rem;
+font-family: var(--font-family); /* Ensure consistent font */
+background-color: #6c757d; /* Formal secondary/gray color */
+color: white;
+border: none;
+border-radius: 4px;
+cursor: pointer;
+transition: background-color 0.2s ease, transform 0.1s ease;
+box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#contact-btn:hover {
+background-color: #5a6268;
+}
+#contact-btn:active {
+transform: scale(0.98); /* Subtle press effect */
+}
+
+
+/* Email Display Styling (Hidden Initially) */
+.email-display-link {
+display: inline-block; /* Needed for transform */
+text-decoration: none; /* Remove underline from link */
+color: inherit; /* Inherit text color */
+opacity: 0; /* Start hidden */
+transform: scale(0.85) translateY(8px); /* Start scaled down and slightly moved */
+transform-origin: left center; /* Animate origin */
+transition: opacity 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Pop animation */
+pointer-events: none; /* Not clickable when hidden */
+will-change: transform, opacity; /* Performance hint */
+}
+
+#email-display {
+display: inline-block;
+background-color: #ffffff; /* White background */
+padding: 0.5rem 1rem;
+border-radius: 4px;
+border: 1px solid var(--border-color, #ced4da);
+font-family: Consolas, monospace; /* Monospace for email */
+box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+color: var(--primary-color, #007bff); /* Make email look like a link */
+}
+
+.email-display-link.visible {
+opacity: 1;
+transform: scale(1) translateY(0);
+pointer-events: auto; /* Make clickable when visible */
+}
+
+.email-display-link:hover #email-display {
+background-color: #f8f9fa; /* Slight hover effect */
+text-decoration: underline;
+}
+
+/* Desktop Styles */
+@media (min-width: 768px) {
+    h1 {
+        font-size: 2.2rem;
+    }
+    .navigation select {
+         max-width: 200px;
+    }
+    .content-area {
+        grid-template-columns: 1fr 1fr; /* Side-by-side layout */
+    }
+     #options-list li input[type="radio"] {
+         position: static; /* Show radio buttons again on desktop */
+         opacity: 1;
+         width: auto;
+         height: auto;
+     }
+
+}
+ @media (min-width: 992px) {
+     .reviewer-container {
+        padding: 2rem;
+     }
+      .navigation {
+        padding: 1.5rem;
+     }
+      .question-panel,
+      .rationalization-panel {
+        padding: 2rem;
+     }
+ }
