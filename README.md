@@ -9,7 +9,7 @@
 
 ## Purpose
 
-This project is designed for Medical Technology students reviewing for their reviewing for their exams, quizzes, Comprehensive exams in MTAP and Seminar, Pre- boards. 
+This project is designed for Medical Technology students reviewing for their exams, quizzes, Comprehensive exams in MTAP and Seminar, Pre- boards. 
 
 ## Future Plans
 
