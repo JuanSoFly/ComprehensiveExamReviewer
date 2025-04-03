@@ -4297,7 +4297,7 @@
             setupSpeech();
             loadQuestion(0); // Load first question
             // Don't automatically read on initial load, user can press button if desired
-
+            
             // --- Keep Contact Button Logic ---
             if (contactBtn && emailLink) {
                 const emailAddress = 'juanteodoro.devera@gmail.com';
@@ -4311,4 +4311,104 @@
                     emailLink.classList.toggle('visible');
                 });
             }
+              // ----- Swipe Navigation Logic -----
+              const contentArea = document.querySelector('.content-area'); // Target content area for swipes
+              const swipeIndicatorPrev = document.getElementById('swipe-indicator-prev');
+              const swipeIndicatorNext = document.getElementById('swipe-indicator-next');
+              let touchStartX = 0;
+              let touchStartY = 0;
+              let touchEndX = 0;
+              let touchEndY = 0;
+              let isSwiping = false;
+              const minSwipeDistance = 50; // Minimum pixels to be considered a swipe
+              const maxVerticalSwipe = 50; // Maximum vertical movement allowed for a horizontal swipe
+  
+              if (contentArea && swipeIndicatorPrev && swipeIndicatorNext) { // Ensure elements exist
+                  contentArea.addEventListener('touchstart', (event) => {
+                      // Use the first touch point
+                      const touch = event.changedTouches[0];
+                      touchStartX = touch.screenX;
+                      touchStartY = touch.screenY;
+                      isSwiping = false;
+                      // event.preventDefault(); // Be cautious with preventDefault on touchstart
+                  }, { passive: true }); // Use passive: true if not preventing default scroll
+  
+                  contentArea.addEventListener('touchmove', (event) => {
+                      const touch = event.changedTouches[0];
+                      touchEndX = touch.screenX;
+                      touchEndY = touch.screenY;
+  
+                      const deltaX = touchEndX - touchStartX;
+                      const deltaY = touchEndY - touchStartY;
+  
+                      // Check if it's primarily a horizontal swipe and exceeds a small threshold
+                      if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 10) {
+                          // If scrolling vertically is not intended during horizontal swipe, prevent it.
+                          // Check if we already started swiping horizontally to avoid jerky behaviour.
+                          // event.preventDefault(); // Use if needed, might block vertical scrolling
+  
+                          isSwiping = true; // Mark as swiping
+  
+                          // Show the appropriate indicator
+                          if (deltaX > 0) { // Swiping Right (Previous)
+                              if (!prevBtn.disabled) {
+                                 swipeIndicatorPrev.classList.add('visible');
+                                 swipeIndicatorNext.classList.remove('visible');
+                              }
+                          } else { // Swiping Left (Next)
+                               if (!nextBtn.disabled) {
+                                  swipeIndicatorNext.classList.add('visible');
+                                  swipeIndicatorPrev.classList.remove('visible');
+                               }
+                          }
+                      } else {
+                           // If vertical movement dominates or deltaX is small, don't treat as horizontal swipe
+                           // Ensure indicators are hidden if swipe direction becomes vertical
+                           if (isSwiping) {
+                               swipeIndicatorPrev.classList.remove('visible');
+                               swipeIndicatorNext.classList.remove('visible');
+                               // Don't reset isSwiping here, let touchend handle the final action based on distance
+                           }
+                      }
+  
+                  }, { passive: false }); // Use passive: false IF preventDefault() is used inside
+  
+                  contentArea.addEventListener('touchend', (event) => {
+                      // Hide indicators regardless of swipe success
+                      swipeIndicatorPrev.classList.remove('visible');
+                      swipeIndicatorNext.classList.remove('visible');
+  
+                      if (!isSwiping) return; // Exit if not considered a swipe during move
+  
+                      const deltaX = touchEndX - touchStartX;
+                      const deltaY = touchEndY - touchStartY;
+  
+                      // Check for valid horizontal swipe on touchend
+                      if (Math.abs(deltaX) >= minSwipeDistance && Math.abs(deltaY) < maxVerticalSwipe) {
+                          if (deltaX > 0) { // Swipe Right -> Previous
+                              if (!prevBtn.disabled) {
+                                  // console.log("Swipe Right Detected - Previous");
+                                  loadQuestion(currentQuestionIndex - 1);
+                                  speakCurrentQuestionAndOptions();
+                              }
+                          } else { // Swipe Left -> Next
+                              if (!nextBtn.disabled) {
+                                  // console.log("Swipe Left Detected - Next");
+                                  loadQuestion(currentQuestionIndex + 1);
+                                  speakCurrentQuestionAndOptions();
+                              }
+                          }
+                      }
+  
+                      // Reset values for the next touch interaction
+                      touchStartX = 0;
+                      touchStartY = 0;
+                      touchEndX = 0;
+                      touchEndY = 0;
+                      isSwiping = false;
+                  });
+              } else {
+                  console.error("Swipe navigation elements not found.");
+              }
+              // ----- End Swipe Navigation Logic -----
         });
