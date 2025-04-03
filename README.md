@@ -1,7 +1,8 @@
 # Comprehensive Exam Reviewer
-## Features
-![gifCompre](https://github.com/user-attachments/assets/319560b2-2bb9-4a60-aedc-85cd5cb2dea4)
 
+![gifCompre](https://github.com/user-attachments/assets/67234d94-9761-4cd1-af7c-725fb1e14b9a)
+
+## Features
 *   **Text-to-Speech:** Reads questions and options aloud. Functionality depends on the browser (Edge recommended on desktop).
 *   **Automatic Feedback:** Reveals the correct answer and rationalization after selection.
 *   **Navigation Speech:** Previous/Next buttons automatically read the next/previous question and options.
