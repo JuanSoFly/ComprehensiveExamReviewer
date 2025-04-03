@@ -1,6 +1,6 @@
 # Comprehensive Exam Reviewer
-https://github.com/JuanSoFly/ComprehensiveExamReviewer/blob/c72e682bb3cd79cd4cb4bb926f38ef6da27b3fb4/gifCompre.gif
 ## Features
+![gifCompre](https://github.com/user-attachments/assets/319560b2-2bb9-4a60-aedc-85cd5cb2dea4)
 
 *   **Text-to-Speech:** Reads questions and options aloud. Functionality depends on the browser (Edge recommended on desktop).
 *   **Automatic Feedback:** Reveals the correct answer and rationalization after selection.
