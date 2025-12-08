@@ -1,11 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Comprehensive Exam Reviewer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
     <div class="reviewer-container">
@@ -17,19 +22,25 @@
         <!-- End swipe indicators -->
 
         <div class="navigation">
-            <button id="prev-btn">Previous</button>
-            <select id="question-select"></select>
-            <span id="question-number"></span>
-            <button id="next-btn">Next</button>
+            <div class="nav-group">
+                <button id="prev-btn">Previous</button>
+                <select id="question-select"></select>
+                <span id="question-number"></span>
+                <button id="next-btn">Next</button>
+            </div>
 
-             <!-- Scoring Display -->
-             <span id="score-display" style="margin-left: 1rem; font-weight: bold; white-space: nowrap;">Score: 0 / 0 (0%)</span>
-             <button id="reset-score-btn" title="Reset Score" style="padding: 0.5rem 0.8rem; margin-left: 0.5rem; background-color: #ffc107; border-color: #ffc107; color: #333;">Reset</button>
-              <!-- End Scoring Display -->
-            
-            <label for="voice-select" style="margin-left: 1rem; font-weight: bold;">Voice:</label>
-            <select id="voice-select"></select>
-            <button id="theme-toggle-btn" style="margin-left: auto; padding: 0.5rem 0.8rem; font-size: 1rem; background-color: var(--panel-bg-color); border: 1px solid var(--border-color); border-radius: 4px; cursor: pointer;">🌙</button> <!-- Dark Mode Toggle -->
+            <!-- Scoring Display -->
+            <div class="score-group">
+                <span id="score-display">Score: 0 / 0 (0%)</span>
+                <button id="reset-score-btn" title="Reset Score">Reset</button>
+            </div>
+            <!-- End Scoring Display -->
+
+            <div class="settings-group">
+                <select id="voice-select"></select>
+                <button id="theme-toggle-btn">🌙</button>
+            </div>
+            <!-- Dark Mode Toggle -->
         </div>
 
         <div class="content-area">
@@ -57,7 +68,8 @@
             </a>
         </div>
     </footer>
-    
+
     <script src="script.js"></script>
 </body>
+
 </html>
