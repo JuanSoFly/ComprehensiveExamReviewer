@@ -40,10 +40,10 @@ You just need a modern web browser (Edge, Chrome, Firefox, Safari). **Microsoft 
     git clone https://github.com/JuanSoFly/ComprehensiveExamReviewer.git
     ```
 2.  **Open the application**:
-    Navigate to the project folder and double-click `reviewer.html` to open it in your browser.
+    Navigate to the project folder and double-click `index.html` to open it in your browser.
 
     *Alternatively, if you have VS Code with Live Server:*
-    *   Right-click `reviewer.html` -> "Open with Live Server".
+    *   Right-click `index.html` -> "Open with Live Server".
 
 ## 🔮 Future Plans
 
