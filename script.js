@@ -90,12 +90,12 @@ function displayLoadingError() {
     nextBtn.disabled = true;
     questionSelect.disabled = true;
     if (questionSelect.options.length === 0) {
-         const option = document.createElement('option');
-         option.textContent = "Error";
-         questionSelect.appendChild(option);
+        const option = document.createElement('option');
+        option.textContent = "Error";
+        questionSelect.appendChild(option);
     }
-     // Display error in score area too
-     if (scoreDisplayElement) scoreDisplayElement.textContent = "Score: Error";
+    // Display error in score area too
+    if (scoreDisplayElement) scoreDisplayElement.textContent = "Score: Error";
 }
 
 // =========================================
@@ -177,14 +177,14 @@ function updateNavButtonsUI() {
 }
 
 function updateNavigationDisplayUI(question) {
-     if (!question || questionsData.length === 0) {
-         questionNumberElement.textContent = `Q 0/0`;
-         if (questionSelect) questionSelect.value = -1;
-         return;
-     }
+    if (!question || questionsData.length === 0) {
+        questionNumberElement.textContent = `Q 0/0`;
+        if (questionSelect) questionSelect.value = -1;
+        return;
+    }
     questionNumberElement.textContent = `Q ${question.id}/${questionsData.length}`;
     if (questionSelect && questionSelect.options.length > 0 && questionSelect.value !== currentQuestionIndex.toString()) {
-         questionSelect.value = currentQuestionIndex;
+        questionSelect.value = currentQuestionIndex;
     }
 }
 
@@ -206,7 +206,7 @@ function populateSelectUI() {
 
 /** Applies visual styles after an answer is selected/revealed. */ // <<< MODIFIED
 function applyAnswerStylesUI(correctIndex, selectedIndex = -1) { // selectedIndex is optional now
-     optionsListElement.querySelectorAll('li').forEach((li, i) => {
+    optionsListElement.querySelectorAll('li').forEach((li, i) => {
         li.classList.add('disabled', 'revealed');
         const input = li.querySelector('input');
         if (input) input.disabled = true;
@@ -214,7 +214,7 @@ function applyAnswerStylesUI(correctIndex, selectedIndex = -1) { // selectedInde
         if (i === correctIndex) {
             li.classList.add('correct-answer');
         } else {
-             li.classList.add('wrong-answer');
+            li.classList.add('wrong-answer');
         }
         // Only add 'selected-answer' if a valid selectedIndex was provided
         if (selectedIndex !== -1 && i === selectedIndex) {
@@ -264,7 +264,7 @@ function loadQuestion(index) {
         answerRevealed = true;
         // Find the index the user previously selected (if incorrect) or the correct index
         let previouslySelectedIndex = -1;
-        if(previousAnswerStatus === false) {
+        if (previousAnswerStatus === false) {
             // Need to find which wrong answer was selected - This info isn't stored!
             // For simplicity, we won't highlight the specific wrong selection when restoring.
             // Alternative: Store the selected index instead of true/false in userAnswers.
@@ -421,37 +421,37 @@ function populateVoiceList() {
             option.setAttribute('data-lang', voice.lang);
             option.setAttribute('data-name', voice.name);
             voiceSelect.appendChild(option);
-             // Find the first preferred voice available
+            // Find the first preferred voice available
             if (preferredVoiceIndex === -1 && preferredVoices.includes(voice.name)) {
                 preferredVoiceIndex = i;
             }
         });
 
-         // Use saved voice if available, else preferred, else default/first
-         const savedVoiceName = localStorage.getItem('selectedVoiceName');
-         let voiceToSelect = -1;
+        // Use saved voice if available, else preferred, else default/first
+        const savedVoiceName = localStorage.getItem('selectedVoiceName');
+        let voiceToSelect = -1;
 
-         if (savedVoiceName) {
-             voiceToSelect = voices.findIndex(voice => voice.name === savedVoiceName);
-         }
+        if (savedVoiceName) {
+            voiceToSelect = voices.findIndex(voice => voice.name === savedVoiceName);
+        }
 
-         if (voiceToSelect === -1) { // If saved voice not found or not set
-             voiceToSelect = (selectedIndex >= 0 && selectedIndex < voices.length) ? selectedIndex : // Use previous selection if valid
-                              (preferredVoiceIndex !== -1) ? preferredVoiceIndex : // Else use preferred
-                              voices.findIndex(voice => voice.default) !== -1 ? voices.findIndex(voice => voice.default) : // Else use default
-                              0; // Else use the first voice
-         }
+        if (voiceToSelect === -1) { // If saved voice not found or not set
+            voiceToSelect = (selectedIndex >= 0 && selectedIndex < voices.length) ? selectedIndex : // Use previous selection if valid
+                (preferredVoiceIndex !== -1) ? preferredVoiceIndex : // Else use preferred
+                    voices.findIndex(voice => voice.default) !== -1 ? voices.findIndex(voice => voice.default) : // Else use default
+                        0; // Else use the first voice
+        }
 
 
         voiceSelect.selectedIndex = voiceToSelect >= 0 ? voiceToSelect : 0; // Fallback to 0 if all else fails
 
         // Save the newly selected voice immediately
-         if (voiceSelect.selectedIndex >= 0 && voices.length > voiceSelect.selectedIndex) {
-             const selectedVoice = voices[voiceSelect.selectedIndex];
-             if (selectedVoice) {
+        if (voiceSelect.selectedIndex >= 0 && voices.length > voiceSelect.selectedIndex) {
+            const selectedVoice = voices[voiceSelect.selectedIndex];
+            if (selectedVoice) {
                 localStorage.setItem('selectedVoiceName', selectedVoice.name);
-             }
-         }
+            }
+        }
 
     } catch (error) {
         console.error("Error populating voice list:", error);
@@ -499,10 +499,10 @@ function setupSpeech() {
         stopSpeechBtn.classList.add('speech-button');
         const themeBtn = document.getElementById('theme-toggle-btn');
         // Insert stop button *before* the theme toggle button if possible
-        if (themeBtn) {
-            navigationDiv.insertBefore(stopSpeechBtn, themeBtn);
+        if (themeBtn && themeBtn.parentNode) {
+            themeBtn.parentNode.insertBefore(stopSpeechBtn, themeBtn);
         } else {
-            navigationDiv.appendChild(stopSpeechBtn); // Fallback if theme button isn't found
+            navigationDiv.appendChild(stopSpeechBtn); // Fallback
         }
         stopSpeechBtn.addEventListener('click', stopSpeech);
     }
@@ -514,15 +514,15 @@ function setupSpeech() {
         speechSynthesis.onvoiceschanged = populateVoiceList;
     }
 
-     // Listener to save selected voice
-     voiceSelect.addEventListener('change', () => {
-         if (voiceSelect.selectedIndex >= 0 && voices.length > voiceSelect.selectedIndex) {
-             const selectedVoice = voices[voiceSelect.selectedIndex];
-             if (selectedVoice) {
-                 localStorage.setItem('selectedVoiceName', selectedVoice.name);
-             }
-         }
-     });
+    // Listener to save selected voice
+    voiceSelect.addEventListener('change', () => {
+        if (voiceSelect.selectedIndex >= 0 && voices.length > voiceSelect.selectedIndex) {
+            const selectedVoice = voices[voiceSelect.selectedIndex];
+            if (selectedVoice) {
+                localStorage.setItem('selectedVoiceName', selectedVoice.name);
+            }
+        }
+    });
 }
 
 function stopSpeech() {
@@ -545,9 +545,9 @@ function speakText(text, onEndCallback = null) {
     // Define the actual speaking logic
     const performSpeak = () => {
         if (isSpeechCancelled) { // Check if cancelled during the timeout
-             console.log("Speech cancelled before restarting.");
-             isSpeechCancelled = false; // Reset for next attempt
-             return;
+            console.log("Speech cancelled before restarting.");
+            isSpeechCancelled = false; // Reset for next attempt
+            return;
         }
         startSpeaking(text, onEndCallback);
     };
@@ -570,25 +570,25 @@ function startSpeaking(text, onEndCallback) {
     }
 
     try {
-         const selectedOption = voiceSelect.options[voiceSelect.selectedIndex];
-         const selectedVoiceName = selectedOption ? selectedOption.getAttribute('data-name') : localStorage.getItem('selectedVoiceName'); // Use saved as fallback
+        const selectedOption = voiceSelect.options[voiceSelect.selectedIndex];
+        const selectedVoiceName = selectedOption ? selectedOption.getAttribute('data-name') : localStorage.getItem('selectedVoiceName'); // Use saved as fallback
 
 
-         utterance.text = text;
-         utterance.pitch = 1;
-         utterance.rate = 0.9; // Adjust rate as needed
+        utterance.text = text;
+        utterance.pitch = 1;
+        utterance.rate = 0.9; // Adjust rate as needed
 
-         let voiceFound = false;
-         if (selectedVoiceName) {
-             const found = voices.find(voice => voice.name === selectedVoiceName);
-             if (found) {
-                 utterance.voice = found;
-                 voiceFound = true;
-             }
-         }
-         if (!voiceFound) { // Fallback if selected/saved voice isn't available
-             utterance.voice = voices.find(voice => voice.default) || voices[0];
-         }
+        let voiceFound = false;
+        if (selectedVoiceName) {
+            const found = voices.find(voice => voice.name === selectedVoiceName);
+            if (found) {
+                utterance.voice = found;
+                voiceFound = true;
+            }
+        }
+        if (!voiceFound) { // Fallback if selected/saved voice isn't available
+            utterance.voice = voices.find(voice => voice.default) || voices[0];
+        }
 
         utterance.onend = () => {
             utterance.onend = null; // Clean up listener
@@ -622,7 +622,7 @@ function speakCurrentQuestionAndOptions() {
     if (questionsData.length === 0 || currentQuestionIndex < 0 || currentQuestionIndex >= questionsData.length) return;
     const question = questionsData[currentQuestionIndex];
     const textToRead = `Question ${question.id}. ${question.question}. Options are: ` +
-                       question.options.map((opt, i) => `${String.fromCharCode(97 + i)}. ${opt}`).join('. ');
+        question.options.map((opt, i) => `${String.fromCharCode(97 + i)}. ${opt}`).join('. ');
     speakText(textToRead);
 }
 
@@ -708,25 +708,25 @@ function setupSwipeNavigation() {
         // Determine if horizontal swipe is intended
         if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 15) { // Increased threshold slightly
             isSwiping = true;
-             // Show indicator based on direction and button state
-             if (deltaX > 0 && !prevBtn.disabled) {
-                 swipeIndicatorPrev.classList.add('visible');
-                 swipeIndicatorNext.classList.remove('visible');
-             } else if (deltaX < 0 && !nextBtn.disabled) {
-                 swipeIndicatorNext.classList.add('visible');
-                 swipeIndicatorPrev.classList.remove('visible');
-             } else {
-                 swipeIndicatorPrev.classList.remove('visible');
-                 swipeIndicatorNext.classList.remove('visible');
-             }
-             // Optional: Prevent vertical scroll during swipe
-             // event.preventDefault(); // Requires passive: false
+            // Show indicator based on direction and button state
+            if (deltaX > 0 && !prevBtn.disabled) {
+                swipeIndicatorPrev.classList.add('visible');
+                swipeIndicatorNext.classList.remove('visible');
+            } else if (deltaX < 0 && !nextBtn.disabled) {
+                swipeIndicatorNext.classList.add('visible');
+                swipeIndicatorPrev.classList.remove('visible');
+            } else {
+                swipeIndicatorPrev.classList.remove('visible');
+                swipeIndicatorNext.classList.remove('visible');
+            }
+            // Optional: Prevent vertical scroll during swipe
+            // event.preventDefault(); // Requires passive: false
         } else {
             // If swipe becomes vertical or stops, hide indicators
-             if (isSwiping) { // Only hide if we were previously showing them
-                 swipeIndicatorPrev.classList.remove('visible');
-                 swipeIndicatorNext.classList.remove('visible');
-             }
+            if (isSwiping) { // Only hide if we were previously showing them
+                swipeIndicatorPrev.classList.remove('visible');
+                swipeIndicatorNext.classList.remove('visible');
+            }
         }
     }, { passive: true }); // Set passive: false if using preventDefault
 
