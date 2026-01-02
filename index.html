@@ -4,74 +4,239 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comprehensive Exam Reviewer</title>
+    <meta name="description" content="Premium Academic Exam Reviewer - A sophisticated study companion">
+    <title>Academic Reviewer | Premium Study Companion</title>
+
+    <!-- Optimized Font Loading - Academic Noir Aesthetic -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preload"
+          href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap"
+          as="style"
+          onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    </noscript>
+
+    <!-- Critical CSS for font fallback -->
+    <style>
+        body {
+            font-family: Georgia, 'Times New Roman', serif;
+            opacity: 0;
+            animation: fadeInBody 0.6s ease-out forwards;
+        }
+        body.fonts-loaded {
+            font-family: 'Crimson Pro', Georgia, 'Times New Roman', serif;
+        }
+        @keyframes fadeInBody { to { opacity: 1; } }
+    </style>
+
     <link rel="stylesheet" href="style.css">
+
+    <!-- PWA Assets -->
     <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
     <link rel="manifest" href="assets/site.webmanifest">
 </head>
 
-<body>
+<body class="loading">
+    <!-- Decorative Background Elements -->
+    <div class="bg-grain"></div>
+    <div class="bg-ornament top-left"></div>
+    <div class="bg-ornament bottom-right"></div>
 
-    <div class="reviewer-container">
-        <h1>Comprehensive Exam Reviewer</h1>
+    <div class="app-wrapper">
+        <!-- Header with Decorative Border -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="branding">
+                    <span class="brand-mark">◆</span>
+                    <h1 class="brand-title">Academic Reviewer</h1>
+                    <span class="brand-mark">◆</span>
+                </div>
+                <div class="header-meta">
+                    <span id="session-timer" class="timer-display">00:00</span>
+                </div>
+            </div>
+        </header>
 
-        <!-- Swipe direction indicators -->
-        <div id="swipe-indicator-prev" class="swipe-indicator">&larr; Prev</div>
-        <div id="swipe-indicator-next" class="swipe-indicator">Next &rarr;</div>
-        <!-- End swipe indicators -->
+        <!-- Main Navigation Bar -->
+        <nav class="nav-bar" role="navigation">
+            <div class="nav-section primary">
+                <button id="prev-btn" class="nav-btn prev" aria-label="Previous question">
+                    <span class="btn-icon">←</span>
+                    <span class="btn-text">Previous</span>
+                </button>
 
-        <div class="navigation">
-            <div class="nav-group">
-                <button id="prev-btn">Previous</button>
-                <select id="question-select"></select>
-                <span id="question-number"></span>
-                <button id="next-btn">Next</button>
+                <div class="question-jumper">
+                    <select id="question-select" aria-label="Jump to question"></select>
+                    <span id="question-number" class="question-counter">Q 1/1000</span>
+                </div>
+
+                <button id="next-btn" class="nav-btn next" aria-label="Next question">
+                    <span class="btn-text">Next</span>
+                    <span class="btn-icon">→</span>
+                </button>
             </div>
 
-            <!-- Scoring Display -->
-            <div class="score-group">
-                <span id="score-display">Score: 0 / 0 (0%)</span>
-                <button id="reset-score-btn" title="Reset Score">Reset</button>
-            </div>
-            <!-- End Scoring Display -->
+            <div class="nav-section secondary">
+                <div class="score-display" id="score-display">
+                    <span class="score-label">Score</span>
+                    <span class="score-value">0/0</span>
+                    <span class="score-percentage">0%</span>
+                </div>
 
-            <div class="settings-group">
-                <select id="voice-select"></select>
-                <button id="theme-toggle-btn">🌙</button>
+                <button id="reset-score-btn" class="nav-btn reset" title="Reset Score">
+                    <span>Reset</span>
+                </button>
             </div>
-            <!-- Dark Mode Toggle -->
+
+            <div class="nav-section settings">
+                <select id="voice-select" aria-label="Text-to-speech voice selection"></select>
+                <button id="stop-speech-btn" class="speech-btn stop" aria-label="Stop speech">
+                    ⏹ Stop
+                </button>
+                <button id="shortcuts-help-btn" class="nav-btn help" aria-label="Keyboard shortcuts" title="Keyboard Shortcuts (?)">
+                    <span>?</span>
+                </button>
+                <button id="theme-toggle-btn" class="nav-btn theme" aria-label="Toggle theme">
+                    <span class="theme-icon">☾</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="content-area">
+            <!-- Question Panel -->
+            <section class="panel question-panel" aria-labelledby="question-text">
+                <div class="panel-header">
+                    <span class="panel-badge">Question</span>
+                    <h2 id="question-text" class="question-text">Loading question...</h2>
+                </div>
+
+                <div class="options-container">
+                    <ul id="options-list" class="options-list" role="radiogroup">
+                        <!-- Options will be loaded here -->
+                    </ul>
+                </div>
+
+                <div class="speech-controls">
+                    <button id="read-question-btn" class="speech-btn" aria-label="Read question aloud">
+                        🔊 Read Question
+                    </button>
+                </div>
+            </section>
+
+            <!-- Rationalization Panel -->
+            <section class="panel rationalization-panel" aria-labelledby="rationalization-title">
+                <div class="panel-header">
+                    <span class="panel-badge">Rationalization</span>
+                    <h3 id="rationalization-title" class="rationalization-title">Analysis & Explanation</h3>
+                </div>
+
+                <div class="rationalization-content">
+                    <p id="rationalization-text" class="rationalization-text">
+                        Select an answer to reveal the rationalization...
+                    </p>
+
+                    <div class="correct-answer-box">
+                        <span class="correct-label">Correct Answer:</span>
+                        <span id="correct-answer-display" class="correct-answer-text">
+                            Awaiting selection...
+                        </span>
+                    </div>
+                </div>
+
+                <div class="speech-controls">
+                    <button id="read-rationalization-btn" class="speech-btn" aria-label="Read rationalization aloud">
+                        🔊 Read Explanation
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Swipe Navigation Indicators -->
+        <div id="swipe-indicator-prev" class="swipe-indicator prev">
+            <span class="swipe-arrow">←</span>
+            <span class="swipe-text">Swipe for Previous</span>
+        </div>
+        <div id="swipe-indicator-next" class="swipe-indicator next">
+            <span class="swipe-text">Swipe for Next</span>
+            <span class="swipe-arrow">→</span>
         </div>
 
-        <div class="content-area">
-            <div class="question-panel">
-                <h2 id="question-text">Loading question...</h2>
-                <ul id="options-list">
-                    <!-- Options will be loaded here by JavaScript -->
-                </ul>
+        <!-- Footer -->
+        <footer class="app-footer">
+            <div class="footer-content">
+                <div class="creator-info">
+                    <span class="creator-name">Juan Teodoro De Vera</span>
+                    <span class="divider">•</span>
+                    <span class="creator-role">Academic Reviewer</span>
+                </div>
+
+                <div class="contact-section">
+                    <button id="contact-btn" class="contact-btn" aria-label="Show contact information">
+                        <span class="contact-icon">✉</span>
+                        <span class="contact-text">Contact</span>
+                    </button>
+
+                    <a href="#" id="email-link" class="email-link" aria-label="Email contact">
+                        <span id="email-display" class="email-address">juanteodoro.devera@gmail.com</span>
+                    </a>
+                </div>
             </div>
-            <div class="rationalization-panel">
-                <h3>Rationalization</h3>
-                <p id="rationalization-text">Loading rationalization...</p>
-                <p><strong>Correct Answer:</strong> <span id="correct-answer-display">Loading...</span></p>
+        </footer>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirm-modal" class="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="confirm-title" style="display: none">
+        <div class="confirm-backdrop"></div>
+        <div class="confirm-dialog">
+            <div class="confirm-icon">⚠</div>
+            <h3 id="confirm-title" class="confirm-title">Reset Progress?</h3>
+            <p id="confirm-message" class="confirm-message">Are you sure you want to reset your score? All progress will be lost.</p>
+            <div class="confirm-actions">
+                <button id="confirm-cancel" class="confirm-btn cancel">Cancel</button>
+                <button id="confirm-ok" class="confirm-btn confirm">Reset</button>
             </div>
         </div>
     </div>
 
-    <footer>
-        <p>Created by Juan Teodoro De Vera</p>
-        <div class="contact-area">
-            <button id="contact-btn">Contact Me</button>
-            <!-- This span will be revealed -->
-            <a href="#" id="email-link" class="email-display-link">
-                <span id="email-display">juanteodoro.devera@gmail.com</span>
-            </a>
+    <!-- Keyboard Shortcuts Modal -->
+    <div id="shortcuts-modal" class="confirm-modal shortcuts-modal" role="dialog" aria-modal="true" aria-labelledby="shortcuts-title" style="display: none">
+        <div class="confirm-backdrop"></div>
+        <div class="confirm-dialog shortcuts-dialog">
+            <div class="shortcuts-header">
+                <span class="shortcuts-icon">⌨</span>
+                <h3 id="shortcuts-title" class="confirm-title">Keyboard Shortcuts</h3>
+            </div>
+            <div class="shortcuts-list">
+                <table class="shortcuts-table">
+                    <tbody>
+                        <tr><td class="shortcut-key"><kbd>←</kbd> / <kbd>→</kbd></td><td>Previous / Next question</td></tr>
+                        <tr><td class="shortcut-key"><kbd>Enter</kbd></td><td>Next question</td></tr>
+                        <tr><td class="shortcut-key"><kbd>1</kbd> - <kbd>4</kbd></td><td>Select answer option</td></tr>
+                        <tr><td class="shortcut-key"><kbd>Space</kbd></td><td>Reveal answer</td></tr>
+                        <tr><td class="shortcut-key"><kbd>T</kbd></td><td>Toggle light/dark theme</td></tr>
+                        <tr><td class="shortcut-key"><kbd>Shift</kbd> + <kbd>R</kbd></td><td>Reset score</td></tr>
+                        <tr><td class="shortcut-key"><kbd>?</kbd></td><td>Show this guide</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="confirm-actions">
+                <button id="shortcuts-close" class="confirm-btn cancel">Close</button>
+            </div>
         </div>
-    </footer>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Preparing Your Study Materials...</div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>

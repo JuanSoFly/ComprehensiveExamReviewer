@@ -31,6 +31,11 @@ let correctCount = 0;   // << NEW
 let attemptedCount = 0; // << NEW
 const SCORE_STORAGE_KEY = 'reviewerUserAnswers'; // << NEW localStorage key
 
+// Session tracking
+let sessionStartTime = null;
+let sessionTimerInterval = null;
+let questionLoadTime = null;
+
 
 // =========================================
 // 2. DOM Element References
@@ -153,7 +158,8 @@ function updateRationalizationPanelUI(question, show) {
         return;
     }
     rationalizationTextElement.textContent = question.rationalization;
-    correctAnswerDisplayElement.textContent = `${question.correctAnswerLetter}. ${question.options[question.correctAnswerIndex]}`;
+    const correctLetter = String.fromCharCode(65 + question.correctAnswerIndex);
+    correctAnswerDisplayElement.textContent = `${correctLetter}. ${question.options[question.correctAnswerIndex]}`;
 
     if (show) {
         rationalizationPanel.classList.add('visible');
@@ -225,9 +231,31 @@ function applyAnswerStylesUI(correctIndex, selectedIndex = -1) { // selectedInde
 
 /** Updates the score display in the navigation bar. */ // <<< NEW
 function updateScoreUI() {
-    if (!scoreDisplayElement || questionsData.length === 0) return;
+    if (questionsData.length === 0) return;
+
+    // Find the score display element (supports both old and new HTML)
+    const scoreDisplay = document.getElementById('score-display');
+    if (!scoreDisplay) return;
+
     const percentage = attemptedCount > 0 ? Math.round((correctCount / attemptedCount) * 100) : 0;
-    scoreDisplayElement.textContent = `Score: ${correctCount} / ${attemptedCount} (${percentage}%)`;
+
+    // Try new structure first
+    const scoreValue = scoreDisplay.querySelector('.score-value');
+    const scorePercentage = scoreDisplay.querySelector('.score-percentage');
+
+    if (scoreValue && scorePercentage) {
+        scoreValue.textContent = `${correctCount}/${attemptedCount}`;
+        scorePercentage.textContent = `${percentage}%`;
+
+        // Subtle animation
+        scoreDisplay.style.transform = 'scale(1.05)';
+        setTimeout(() => {
+            scoreDisplay.style.transform = 'scale(1)';
+        }, 200);
+    } else {
+        // Fallback to old structure
+        scoreDisplay.textContent = `Score: ${correctCount} / ${attemptedCount} (${percentage}%)`;
+    }
 }
 
 
@@ -369,30 +397,57 @@ function initializeScore() {
     attemptedCount = 0;
 }
 
-/** Resets the score, clears storage, and refreshes the current question view. */
-function resetScore() {
-    // Optional: Confirm with the user
-    if (!confirm("Are you sure you want to reset your score? All progress will be lost.")) {
-        return;
+/** Shows the custom confirmation modal */
+function showConfirmModal() {
+    const modal = document.getElementById('confirm-modal');
+    if (modal) {
+        modal.style.display = '';
+        modal.classList.add('visible');
     }
+}
 
+/** Hides the custom confirmation modal */
+function hideConfirmModal() {
+    const modal = document.getElementById('confirm-modal');
+    if (modal) {
+        modal.classList.remove('visible');
+        modal.style.display = 'none';
+    }
+}
+
+/** Performs the actual score reset after confirmation */
+function performReset() {
     console.log("Resetting score...");
     initializeScore(); // Reset in-memory state
     localStorage.removeItem(SCORE_STORAGE_KEY); // Clear storage
     updateScoreUI(); // Update display to 0/0
 
+    // Reset session timer
+    setupSessionTimer();
+
     // Reload the current question to clear visual feedback (correct/wrong styles)
-    // This will re-render the options as unanswered
     loadQuestion(currentQuestionIndex);
 
-    // Optional: Provide feedback to the user
-    // alert("Score has been reset.");
+    hideConfirmModal();
 }
 
-/** Sets up the listener for the reset score button. */
+/** Sets up the listener for the reset score button and modal. */
 function setupResetButton() {
+    const confirmOk = document.getElementById('confirm-ok');
+    const confirmCancel = document.getElementById('confirm-cancel');
+    const backdrop = document.querySelector('.confirm-backdrop');
+
     if (resetScoreBtn) {
-        resetScoreBtn.addEventListener('click', resetScore);
+        resetScoreBtn.addEventListener('click', showConfirmModal);
+    }
+    if (confirmOk) {
+        confirmOk.addEventListener('click', performReset);
+    }
+    if (confirmCancel) {
+        confirmCancel.addEventListener('click', hideConfirmModal);
+    }
+    if (backdrop) {
+        backdrop.addEventListener('click', hideConfirmModal);
     }
 }
 
@@ -463,50 +518,24 @@ function setupSpeech() {
         console.warn("Speech Synthesis not supported.");
         if (voiceSelect) voiceSelect.disabled = true;
         if (voiceSelect?.previousElementSibling) voiceSelect.previousElementSibling.style.opacity = 0.5;
-        // Ensure buttons don't get created or are hidden
         return;
     }
 
-    // Create buttons only if they don't exist
-    if (!readQuestionBtn && questionPanel) {
-        readQuestionBtn = document.createElement('button');
-        readQuestionBtn.textContent = 'Read Q+A';
-        readQuestionBtn.id = 'read-question-btn';
-        readQuestionBtn.classList.add('speech-button');
-        const qDiv = document.createElement('div');
-        qDiv.classList.add('speech-controls');
-        qDiv.appendChild(readQuestionBtn);
-        questionPanel.appendChild(qDiv);
+    // Select existing buttons from HTML
+    readQuestionBtn = document.getElementById('read-question-btn');
+    readRationalizationBtn = document.getElementById('read-rationalization-btn');
+    stopSpeechBtn = document.getElementById('stop-speech-btn');
+
+    // Attach event listeners
+    if (readQuestionBtn) {
         readQuestionBtn.addEventListener('click', speakCurrentQuestionAndOptions);
     }
-
-    if (!readRationalizationBtn && rationalizationPanel) {
-        readRationalizationBtn = document.createElement('button');
-        readRationalizationBtn.textContent = 'Read Rationalization';
-        readRationalizationBtn.id = 'read-rationalization-btn';
-        readRationalizationBtn.classList.add('speech-button');
-        const rDiv = document.createElement('div');
-        rDiv.classList.add('speech-controls');
-        rDiv.appendChild(readRationalizationBtn);
-        rationalizationPanel.appendChild(rDiv);
+    if (readRationalizationBtn) {
         readRationalizationBtn.addEventListener('click', speakRationalizationOnly);
     }
-
-    if (!stopSpeechBtn && navigationDiv) {
-        stopSpeechBtn = document.createElement('button');
-        stopSpeechBtn.textContent = 'Stop Speech';
-        stopSpeechBtn.id = 'stop-speech-btn';
-        stopSpeechBtn.classList.add('speech-button');
-        const themeBtn = document.getElementById('theme-toggle-btn');
-        // Insert stop button *before* the theme toggle button if possible
-        if (themeBtn && themeBtn.parentNode) {
-            themeBtn.parentNode.insertBefore(stopSpeechBtn, themeBtn);
-        } else {
-            navigationDiv.appendChild(stopSpeechBtn); // Fallback
-        }
+    if (stopSpeechBtn) {
         stopSpeechBtn.addEventListener('click', stopSpeech);
     }
-
 
     // Populate voice list
     populateVoiceList();
@@ -630,7 +659,8 @@ function speakRationalizationOnly() {
     if (questionsData.length === 0 || currentQuestionIndex < 0 || currentQuestionIndex >= questionsData.length) return;
     const question = questionsData[currentQuestionIndex];
     const rationalizationTextPart = `Rationalization: ${question.rationalization}.`;
-    const correctAnswerTextPart = `The correct answer is ${question.correctAnswerLetter}. ${question.options[question.correctAnswerIndex]}.`;
+    const correctLetter = String.fromCharCode(65 + question.correctAnswerIndex);
+    const correctAnswerTextPart = `The correct answer is ${correctLetter}. ${question.options[question.correctAnswerIndex]}.`;
 
     const readCorrectAnswerCallback = () => {
         if (!isSpeechCancelled) { // Check cancellation flag before proceeding
@@ -758,14 +788,14 @@ function setupSwipeNavigation() {
 // ... (Keep applyTheme and setupThemeToggle as they were) ...
 function applyTheme(theme) {
     currentTheme = theme;
-    if (theme === 'dark') {
-        bodyElement.classList.add('dark-mode');
-        themeToggleBtn.textContent = '☀️';
-        localStorage.setItem('theme', 'dark');
-    } else {
-        bodyElement.classList.remove('dark-mode');
+    if (theme === 'light') {
+        bodyElement.classList.add('light-mode');
         themeToggleBtn.textContent = '🌙';
         localStorage.setItem('theme', 'light');
+    } else {
+        bodyElement.classList.remove('light-mode');
+        themeToggleBtn.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
     }
 }
 
@@ -775,8 +805,8 @@ function setupThemeToggle() {
         applyTheme(newTheme);
     });
 
-    // Apply saved theme on load
-    const savedTheme = localStorage.getItem('theme') || 'light';
+    // Apply saved theme on load (default is dark)
+    const savedTheme = localStorage.getItem('theme') || 'dark';
     applyTheme(savedTheme);
 }
 
@@ -804,23 +834,279 @@ function setupContactButton() {
 // 11. Initialization
 // =========================================
 
-/** Initializes the application after questions are loaded. */ // <<< MODIFIED
+/** Enhanced initialization with loading states and animations */ // <<< MODIFIED
 function initializeApp() {
     if (questionsData.length === 0) {
         console.error("Initialization failed: No question data.");
         displayLoadingError();
         return;
     }
+
+    // Hide loading overlay with animation
+    setTimeout(() => {
+        const overlay = document.getElementById('loading-overlay');
+        if (overlay) {
+            overlay.classList.add('hidden');
+        }
+        document.body.classList.remove('loading');
+    }, 800);
+
+    // Initialize all components
     populateSelectUI();
-    setupSpeech(); // Includes populating voices
-    setupNavigationListeners(); // Includes swipe
-    setupResetButton(); // << NEW: Set up the reset button listener
-    loadQuestion(0); // Load the first question and update UI (will also update score display initially)
+    setupSpeech();
+    setupNavigationListeners();
+    setupResetButton();
+    setupSessionTimer();
+    setupKeyboardShortcuts();
+    setupShortcutsGuide();
+
+    // Load first question with staggered animation
+    setTimeout(() => {
+        loadQuestion(0);
+    }, 1000);
 }
 
-/** Main entry point on DOMContentLoaded. */ // <<< MODIFIED
+/** Main entry point with enhanced font loading and animations */ // <<< MODIFIED
 document.addEventListener('DOMContentLoaded', () => {
-    setupThemeToggle(); // Set theme immediately
-    setupContactButton(); // Set up contact button immediately
-    fetchQuestions(); // Start loading data, which triggers loadScore and initializeApp on success
+    // Font loading detection
+    if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(() => {
+            document.body.classList.add('fonts-loaded');
+            console.log('✓ Fonts loaded');
+        });
+    } else {
+        setTimeout(() => document.body.classList.add('fonts-loaded'), 300);
+    }
+
+    // Theme and contact setup
+    setupThemeToggle();
+    setupContactButton();
+
+    // Start loading data
+    fetchQuestions();
 });
+
+// =========================================
+// 12. Session Timer Module << NEW
+// =========================================
+function setupSessionTimer() {
+    sessionStartTime = Date.now();
+    updateTimerDisplay();
+
+    sessionTimerInterval = setInterval(updateTimerDisplay, 1000);
+}
+
+function updateTimerDisplay() {
+    if (!sessionStartTime) return;
+
+    const elapsed = Date.now() - sessionStartTime;
+    const minutes = Math.floor(elapsed / 60000);
+    const seconds = Math.floor((elapsed % 60000) / 1000);
+
+    const timerElement = document.getElementById('session-timer');
+    if (timerElement) {
+        timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+}
+
+function stopSessionTimer() {
+    if (sessionTimerInterval) {
+        clearInterval(sessionTimerInterval);
+        sessionTimerInterval = null;
+    }
+}
+
+// =========================================
+// 13. Keyboard Shortcuts Module << NEW
+// =========================================
+function setupKeyboardShortcuts() {
+    document.addEventListener('keydown', (e) => {
+        // Ignore if typing in input/select
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') {
+            return;
+        }
+
+        switch(e.key) {
+            case 'ArrowLeft':
+                if (!prevBtn.disabled) {
+                    prevBtn.click();
+                    e.preventDefault();
+                }
+                break;
+            case 'ArrowRight':
+            case 'Enter':
+                if (!nextBtn.disabled) {
+                    nextBtn.click();
+                    e.preventDefault();
+                }
+                break;
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+                const optionIndex = parseInt(e.key) - 1;
+                selectAnswerByIndex(optionIndex);
+                e.preventDefault();
+                break;
+            case ' ':
+                if (!answerRevealed && document.querySelector('#options-list li')) {
+                    const firstOption = document.querySelector('#options-list li');
+                    if (firstOption) firstOption.click();
+                }
+                e.preventDefault();
+                break;
+            case 't':
+                document.getElementById('theme-toggle-btn')?.click();
+                break;
+            case 'R':
+                if (e.shiftKey) {
+                    document.getElementById('reset-score-btn')?.click();
+                    e.preventDefault();
+                }
+                break;
+            case '?':
+                toggleShortcutsGuide();
+                e.preventDefault();
+                break;
+        }
+    });
+}
+
+function selectAnswerByIndex(index) {
+    if (answerRevealed) return;
+
+    const options = document.querySelectorAll('#options-list li');
+    if (index >= 0 && index < options.length) {
+        options[index].click();
+    }
+}
+
+// =========================================
+// 14. Enhanced UI Updates << NEW
+// =========================================
+function updateQuestionPanelUI(question) {
+    if (!question || !question.options) {
+        console.error("Invalid question data for UI update:", question);
+        questionTextElement.textContent = "Error displaying question.";
+        optionsListElement.innerHTML = '';
+        return;
+    }
+
+    // Clean fade-in effect for question (no typewriter to avoid text corruption)
+    questionTextElement.style.opacity = '0';
+    questionTextElement.textContent = `${question.id}. ${question.question}`;
+
+    setTimeout(() => {
+        questionTextElement.style.transition = 'opacity 0.4s ease-in';
+        questionTextElement.style.opacity = '1';
+    }, 50);
+
+    optionsListElement.innerHTML = '';
+
+    question.options.forEach((optionText, i) => {
+        const li = document.createElement('li');
+        setupOptionItem(li, question.id, i);
+
+        // Staggered animation
+        li.style.opacity = '0';
+        li.style.transform = 'translateX(-10px)';
+
+        optionsListElement.appendChild(li);
+
+        setTimeout(() => {
+            li.style.transition = 'all 0.4s var(--ease-smooth)';
+            li.style.opacity = '1';
+            li.style.transform = 'translateX(0)';
+        }, 100 + (i * 80));
+    });
+
+    questionLoadTime = Date.now();
+}
+
+function updateRationalizationPanelUI(question, show) {
+    if (!question) return;
+
+    rationalizationTextElement.textContent = question.rationalization;
+    const correctLetter = String.fromCharCode(65 + question.correctAnswerIndex);
+    correctAnswerDisplayElement.textContent = `${correctLetter}. ${question.options[question.correctAnswerIndex]}`;
+
+    if (show) {
+        rationalizationPanel.classList.add('visible');
+
+        setTimeout(() => {
+            correctAnswerDisplayElement.style.textShadow = '0 0 10px rgba(74, 158, 95, 0.5)';
+            setTimeout(() => {
+                correctAnswerDisplayElement.style.textShadow = 'none';
+            }, 1000);
+        }, 300);
+    } else {
+        rationalizationPanel.classList.remove('visible');
+    }
+}
+
+// =========================================
+// 15. Enhanced Initialization
+// =========================================
+function initializeApp() {
+    if (questionsData.length === 0) {
+        console.error("Initialization failed: No question data.");
+        displayLoadingError();
+        return;
+    }
+
+    // Hide loading overlay
+    setTimeout(() => {
+        const overlay = document.getElementById('loading-overlay');
+        if (overlay) {
+            overlay.classList.add('hidden');
+        }
+        document.body.classList.remove('loading');
+    }, 800);
+
+    // Initialize components
+    populateSelectUI();
+    setupSpeech();
+    setupNavigationListeners();
+    setupResetButton();
+    setupSessionTimer();
+    setupKeyboardShortcuts();
+    setupShortcutsGuide();
+
+    // Load first question
+    setTimeout(() => {
+        loadQuestion(0);
+    }, 1000);
+}
+
+// =========================================
+// 16. Keyboard Shortcuts Guide
+// =========================================
+function toggleShortcutsGuide() {
+    const modal = document.getElementById('shortcuts-modal');
+    if (modal) {
+        const isVisible = modal.classList.contains('visible');
+        if (isVisible) {
+            modal.classList.remove('visible');
+            modal.style.display = 'none';
+        } else {
+            modal.style.display = '';
+            modal.classList.add('visible');
+        }
+    }
+}
+
+function setupShortcutsGuide() {
+    const helpBtn = document.getElementById('shortcuts-help-btn');
+    const closeBtn = document.getElementById('shortcuts-close');
+    const backdrop = document.querySelector('#shortcuts-modal .confirm-backdrop');
+
+    if (helpBtn) {
+        helpBtn.addEventListener('click', toggleShortcutsGuide);
+    }
+    if (closeBtn) {
+        closeBtn.addEventListener('click', toggleShortcutsGuide);
+    }
+    if (backdrop) {
+        backdrop.addEventListener('click', toggleShortcutsGuide);
+    }
+}
