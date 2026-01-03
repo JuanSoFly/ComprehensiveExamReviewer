@@ -1,0 +1,118 @@
+/*
+ * ACADEMIC NOIR - Premium Exam Reviewer
+ * Animations & Responsive Utilities
+ */
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeInBody {
+    to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.1); }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ========================================
+   RESPONSIVE ADJUSTMENTS
+   ======================================== */
+@media (max-width: 768px) {
+    .app-wrapper {
+        padding: var(--space-md);
+    }
+
+    .brand-title {
+        font-size: 1.5rem;
+    }
+
+    .nav-bar {
+        padding: var(--space-md);
+    }
+
+    .nav-section {
+        justify-content: center;
+    }
+
+    .nav-section.primary {
+        flex-direction: column;
+    }
+
+    .question-jumper {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .content-area {
+        grid-template-columns: 1fr;
+    }
+
+    .panel {
+        padding: var(--space-lg);
+    }
+
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .swipe-indicator {
+        font-size: 0.8rem;
+        padding: var(--space-sm) var(--space-md);
+    }
+}
+
+@media (max-width: 480px) {
+    .brand-title {
+        font-size: 1.2rem;
+    }
+
+    .question-text {
+        font-size: 1.1rem;
+    }
+
+    .options-list li {
+        padding: var(--space-md);
+    }
+
+    .speech-controls {
+        flex-direction: column;
+    }
+
+    .speech-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}

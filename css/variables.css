@@ -1,0 +1,77 @@
+/*
+ * ACADEMIC NOIR - Premium Exam Reviewer
+ * CSS Variables & Design System
+ * Color Palette: Deep Burgundy, Antique Gold, Charcoal, Parchment
+ */
+
+/* ========================================
+   CSS VARIABLES - Design System
+   ======================================== */
+:root {
+    /* Academic Noir Palette */
+    --color-ink: #1a0f0f;           /* Deep charcoal/black */
+    --color-burgundy: #4a0404;      /* Rich burgundy */
+    --color-burgundy-light: #6d0606;
+    --color-gold: #d4af37;          /* Antique gold */
+    --color-gold-dim: #9d8228;
+    --color-parchment: #f4e8d0;     /* Warm cream */
+    --color-parchment-dark: #d9c9a8;
+    --color-slate: #2d2d2d;         /* Dark slate */
+
+    /* Semantic Colors */
+    --bg-primary: var(--color-ink);
+    --bg-secondary: var(--color-slate);
+    --bg-panel: #241818;            /* Warm dark brown */
+    --text-primary: var(--color-parchment);
+    --text-secondary: var(--color-parchment-dark);
+    --text-muted: #8b7d6b;
+
+    --accent-primary: var(--color-gold);
+    --accent-hover: var(--color-gold-dim);
+    --accent-glow: rgba(212, 175, 55, 0.3);
+
+    --success: #4a9d5f;
+    --error: #c44545;
+    --warning: #d4a037;
+
+    /* Typography */
+    --font-display: 'Cinzel', Georgia, 'Times New Roman', serif;
+    --font-body: 'Crimson Pro', Georgia, 'Times New Roman', serif;
+    --font-mono: 'Courier New', monospace;
+
+    /* Spacing */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    --space-2xl: 3rem;
+    --space-3xl: 4rem;
+
+    /* Borders & Shadows */
+    --border-thin: 1px solid rgba(212, 175, 55, 0.2);
+    --border-thick: 2px solid var(--color-gold);
+    --shadow-glow: 0 0 20px rgba(212, 175, 55, 0.15);
+    --shadow-deep: 0 10px 30px rgba(0, 0, 0, 0.5);
+
+    /* Transitions */
+    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    /* Layout */
+    --max-width: 1200px;
+    --header-height: 80px;
+}
+
+/* Light Theme Override */
+body.light-mode {
+    --bg-primary: #f9f5eb;
+    --bg-secondary: #ede6d6;
+    --bg-panel: #ffffff;
+    --text-primary: #1a0f0f;
+    --text-secondary: #3d2f2f;
+    --text-muted: #6d5d4d;
+    --color-slate: #e8dfd0;
+
+    background-color: var(--bg-primary);
+}
