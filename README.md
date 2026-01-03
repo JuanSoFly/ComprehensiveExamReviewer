@@ -2,6 +2,8 @@
 
 **A sophisticated, library-inspired study tool with 300 questions**
 
+You can use it here: https://medtechreviewer.vercel.app/
+
 ---
 
 ## Design Philosophy: Academic Noir
@@ -20,7 +22,7 @@ This isn't just another exam reviewer. It's a **premium study companion** design
 ## Key Features
 
 ### Core Functionality
-- [OK] **1000+ Exam Questions** across multiple categories
+- [OK] **300 Exam Questions** across multiple categories
 - [OK] **Immediate Feedback** with detailed rationalizations
 - [OK] **Progress Tracking** with persistent localStorage
 - [OK] **Session Timer** to track study time
