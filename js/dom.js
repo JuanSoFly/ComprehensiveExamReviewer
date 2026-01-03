@@ -84,10 +84,10 @@ export {
     shortcutsCloseBtn,
     shortcutsBackdrop,
     sessionTimerElement,
-    loadingOverlay,
-
-    // Setters for speech buttons (they're initialized later)
-    setReadQuestionBtn: (element) => { readQuestionBtn = element; },
-    setReadRationalizationBtn: (element) => { readRationalizationBtn = element; },
-    setStopSpeechBtn: (element) => { stopSpeechBtn = element; }
+    loadingOverlay
 };
+
+// Setters for speech buttons (they're initialized later)
+export function setReadQuestionBtn(element) { readQuestionBtn = element; }
+export function setReadRationalizationBtn(element) { readRationalizationBtn = element; }
+export function setStopSpeechBtn(element) { stopSpeechBtn = element; }

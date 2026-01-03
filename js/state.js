@@ -26,7 +26,7 @@ let sessionStartTime = null;
 let sessionTimerInterval = null;
 let questionLoadTime = null;
 
-// Export all state variables and setters
+// Export all state variables
 export {
     currentQuestionIndex,
     questionsData,
@@ -42,19 +42,19 @@ export {
     SCORE_STORAGE_KEY,
     sessionStartTime,
     sessionTimerInterval,
-    questionLoadTime,
-
-    // Setters for updating state
-    setCurrentQuestionIndex: (value) => { currentQuestionIndex = value; },
-    setQuestionsData: (value) => { questionsData = value; },
-    setAnswerRevealed: (value) => { answerRevealed = value; },
-    setCurrentTheme: (value) => { currentTheme = value; },
-    setVoices: (value) => { voices = value; },
-    setIsSpeechCancelled: (value) => { isSpeechCancelled = value; },
-    setUserAnswers: (value) => { userAnswers = value; },
-    setCorrectCount: (value) => { correctCount = value; },
-    setAttemptedCount: (value) => { attemptedCount = value; },
-    setSessionStartTime: (value) => { sessionStartTime = value; },
-    setSessionTimerInterval: (value) => { sessionTimerInterval = value; },
-    setQuestionLoadTime: (value) => { questionLoadTime = value; }
+    questionLoadTime
 };
+
+// Setter functions
+export function setCurrentQuestionIndex(value) { currentQuestionIndex = value; }
+export function setQuestionsData(value) { questionsData = value; }
+export function setAnswerRevealed(value) { answerRevealed = value; }
+export function setCurrentTheme(value) { currentTheme = value; }
+export function setVoices(value) { voices = value; }
+export function setIsSpeechCancelled(value) { isSpeechCancelled = value; }
+export function setUserAnswers(value) { userAnswers = value; }
+export function setCorrectCount(value) { correctCount = value; }
+export function setAttemptedCount(value) { attemptedCount = value; }
+export function setSessionStartTime(value) { sessionStartTime = value; }
+export function setSessionTimerInterval(value) { sessionTimerInterval = value; }
+export function setQuestionLoadTime(value) { questionLoadTime = value; }
