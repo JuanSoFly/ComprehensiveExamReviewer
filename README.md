@@ -2,7 +2,7 @@
 
 **A sophisticated, library-inspired study tool with 300 questions**
 
-You can try it here: https://medtechreviewer.vercel.app/
+You can use it here: https://medtechreviewer.vercel.app/
 
 ---
 
