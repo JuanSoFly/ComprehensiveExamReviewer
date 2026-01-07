@@ -88,8 +88,8 @@ python3 -m http.server 8000
 
 -   **HTML5**: Semantic structure with modern markup
 -   **CSS3**: Advanced styling with CSS variables, animations, and responsive design
--   **JavaScript**: Modular architecture with enhanced interactions
--   **JSON**: 1000+ questions with detailed rationalizations
+-   **JavaScript**: ES6 Modules architecture for better maintainability and concern separation
+-   **JSON**: 300+ carefully curated exam questions with detailed rationalizations
 -   **Web Fonts**: Cinzel + Crimson Pro from Google Fonts
 -   **PWA**: Web manifest for standalone installation
 
@@ -100,9 +100,19 @@ python3 -m http.server 8000
 ```
 ComprehensiveExamReviewer/
 ├── index.html              # Main HTML structure
-├── style.css               # Academic Noir CSS (987 lines)
-├── script.js               # Enhanced JavaScript logic
-├── questions.json          # 1000+ questions
+├── css/                    # Modular CSS styles
+│   ├── base.css
+│   ├── components.css
+│   ├── layout.css
+│   ├── utilities.css
+│   └── variables.css
+├── js/                     # ES6 JavaScript Modules
+│   ├── main.js             # Entry point
+│   ├── data.js             # Data fetching
+│   ├── dom.js              # DOM elements
+│   ├── quiz.js             # Core quiz logic
+│   └── ...                 # Other modules (tts, theme, etc.)
+├── questions.json          # 300+ questions
 ├── assets/
 │   ├── site.webmanifest    # PWA configuration
 │   ├── favicon-*.png       # Icons
@@ -271,6 +281,12 @@ ComprehensiveExamReviewer/
 - [ ] Export results as PDF
 - [ ] Search functionality
 - [ ] Statistics dashboard
+
+---
+
+## License
+
+This project is open source and available under the [MIT License](LICENSE).
 
 ---
 
