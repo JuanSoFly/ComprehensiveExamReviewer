@@ -4,6 +4,8 @@
 
 You can use it here: https://medtechreviewer.vercel.app/
 
+![Comprehensive View](assets/comprehensive-view.png)
+
 ---
 
 ## Design Philosophy: Academic Noir
